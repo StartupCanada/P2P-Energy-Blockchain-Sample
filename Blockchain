@@ -1,0 +1,43 @@
+import hashlib
+import datetime
+
+class Block:
+    def __init__(self, timestamp, transactions, previous_hash):
+        self.timestamp = timestamp
+        self.transactions = transactions
+        self.previous_hash = previous_hash
+        self.hash = self.calculate_hash()
+    
+    def calculate_hash(self):
+        block_string = str(self.timestamp) + str(self.transactions) + str(self.previous_hash)
+        return hashlib.sha256(block_string.encode()).hexdigest()
+
+class Transaction:
+    def __init__(self, sender, receiver, amount):
+        self.sender = sender
+        self.receiver = receiver
+        self.amount = amount
+    
+    def __str__(self):
+        return f'{self.sender} sent {self.amount} energy to {self.receiver}'
+
+class Blockchain:
+    def __init__(self):
+        self.chain = [Block(datetime.datetime.now(), [], None)]
+        self.pending_transactions = []
+        
+    def add_transaction(self, transaction):
+        self.pending_transactions.append(transaction)
+        
+    def mine_block(self):
+        transactions = self.pending_transactions
+        self.pending_transactions = []
+        previous_hash = self.chain[-1].hash
+        block = Block(datetime.datetime.now(), transactions, previous_hash)
+        self.chain.append(block)
+        
+    def print_chain(self):
+        for block in self.chain:
+            print(f'Block hash: {block.hash}')
+            print(f'Block timestamp: {block.timestamp}')
+            print(f'Block transactions: {block.transactions}\n')
